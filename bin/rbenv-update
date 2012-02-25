@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$RBENV_DEBUG" ] && set -x
+
+indent_output() {
+  while read data; do
+    echo -e " \033[1;32m|\033[0m  $data"
+  done
+}
+
+rbenv_update() {
+  echo -e "\033[1;32mupdating $1\033[0m"
+  git checkout master 2>&1 | indent_output
+  git pull origin master 2>&1 | indent_output
+  echo
+}
+
+cd $RBENV_ROOT
+rbenv_update rbenv
+
+for plugin in plugins/*; do
+  if [ -d $plugin/.git ]; then
+    cd $plugin
+    rbenv_update `basename $plugin`
+    cd - >/dev/null
+  fi
+done
