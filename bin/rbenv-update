@@ -15,7 +15,7 @@ rbenv_update() {
   echo
 }
 
-cd $RBENV_ROOT
+cd ${RBENV_ROOT:-$(rbenv root)}
 rbenv_update rbenv
 
 for plugin in plugins/*; do
