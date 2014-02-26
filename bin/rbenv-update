@@ -28,7 +28,7 @@ cd ${RBENV_ROOT:-$(rbenv root)}
 rbenv_update rbenv
 
 for plugin in plugins/*; do
-  cd $plugin
+  pushd $plugin >/dev/null
   rbenv_update `basename $plugin`
-  cd - >/dev/null
+  popd >/dev/null
 done
