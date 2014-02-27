@@ -8,11 +8,19 @@ indent_output() {
   done
 }
 
+is_git_repo() {
+  $(git rev-parse --git-dir &>/dev/null)
+}
+
 rbenv_update() {
   echo -e "\033[1;32mupdating $1\033[0m"
-  git checkout master 2>&1 | indent_output
-  git fetch origin 2>&1 | indent_output
-  git pull origin master 2>&1 | indent_output
+  if is_git_repo; then
+    git checkout master 2>&1 | indent_output
+    git fetch origin 2>&1 | indent_output
+    git pull origin master 2>&1 | indent_output
+  else
+    echo -e "Not a git repo; skipping..." | indent_output
+  fi
   echo
 }
 
@@ -20,9 +28,7 @@ cd ${RBENV_ROOT:-$(rbenv root)}
 rbenv_update rbenv
 
 for plugin in plugins/*; do
-  if [ -d $plugin/.git ]; then
-    cd $plugin
-    rbenv_update `basename $plugin`
-    cd - >/dev/null
-  fi
+  pushd $plugin >/dev/null
+  rbenv_update `basename $plugin`
+  popd >/dev/null
 done
