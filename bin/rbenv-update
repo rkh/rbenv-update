@@ -15,7 +15,7 @@ is_rbenv_git_repo() {
 rbenv_update() {
   echo -e "\033[1;32mupdating $1\033[0m"
   if is_rbenv_git_repo; then
-    git pull 2>&1 | indent_output
+    git pull --no-rebase --ff 2>&1 | indent_output
   else
     echo -e "Not an rbenv git repo; skipping..." | indent_output
   fi
