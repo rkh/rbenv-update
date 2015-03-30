@@ -8,16 +8,16 @@ indent_output() {
   done
 }
 
-is_git_repo() {
-  $(git rev-parse --git-dir &>/dev/null)
+is_rbenv_git_repo() {
+  $(git remote -v | grep rbenv &>/dev/null)
 }
 
 rbenv_update() {
   echo -e "\033[1;32mupdating $1\033[0m"
-  if is_git_repo; then
+  if is_rbenv_git_repo; then
     git pull 2>&1 | indent_output
   else
-    echo -e "Not a git repo; skipping..." | indent_output
+    echo -e "Not an rbenv git repo; skipping..." | indent_output
   fi
   echo
 }
