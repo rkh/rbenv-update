@@ -9,7 +9,7 @@ indent_output() {
 }
 
 is_rbenv_git_repo() {
-  $(git remote -v | grep rbenv &>/dev/null)
+  $(git remote -v | grep -E 'rbenv|ruby-build' &>/dev/null)
 }
 
 rbenv_update() {
