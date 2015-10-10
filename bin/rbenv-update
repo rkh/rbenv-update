@@ -49,8 +49,10 @@ rbenv_update() {
 cd "$(dirname $(which rbenv))"
 rbenv_update rbenv
 
+shopt -s nullglob
 for plugin in "$RBENV_ROOT"/plugins/*; do
   pushd $plugin >/dev/null
   rbenv_update `basename $plugin`
   popd >/dev/null
 done
+shopt -u nullglob
