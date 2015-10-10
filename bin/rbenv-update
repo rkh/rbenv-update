@@ -2,9 +2,17 @@
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
+if [ -t 1 ]; then
+  color="\e[1;32m"
+  reset="\e[0m"
+else
+  color=""
+  reset=""
+fi
+
 indent_output() {
   while read data; do
-    echo -e " \033[1;32m|\033[0m  $data"
+    printf " ${color}|${reset}  %s\n" "$data"
   done
 }
 
@@ -13,11 +21,11 @@ is_rbenv_git_repo() {
 }
 
 rbenv_update() {
-  echo -e "\033[1;32mupdating $1\033[0m"
+  printf "${color}updating %s${reset}\n" "$1"
   if is_rbenv_git_repo; then
     git pull --no-rebase --ff 2>&1 | indent_output
   else
-    echo -e "Not an rbenv git repo; skipping..." | indent_output
+    echo "Not an rbenv git repo; skipping..." | indent_output
   fi
   echo
 }
