@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
+# Usage: rbenv update [--noop]
+# Summary: Updates to latest version of rbenv and plugins from git.
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
+
+noop=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+  --noop ) noop=true ;;
+  esac
+  shift 1
+done
+
+git() {
+  local cmd="command"
+  [[ -n "$noop" && "$1" = "pull" ]] && cmd="echo"
+  $cmd git "$@"
+}
 
 if [ -t 1 ]; then
   color="\e[1;32m"
