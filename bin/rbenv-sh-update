@@ -6,13 +6,13 @@ shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
 case "$shell" in
 fish )
-  echo -n "$(which rbenv-update); and "
+  echo -n "command rbenv update; and "
   echo -n 'echo -e "\033[1;32mreloading rbenv\033[0m"; and '
   echo -n '. (rbenv init - | psub); and '
   echo -n 'echo -e " \033[1;32m|\033[0m  done"'
   ;;
 * )
-  echo -n "$(which rbenv-update) && "
+  echo -n "command rbenv update && "
   echo -n 'echo -e "\033[1;32mreloading rbenv\033[0m" && '
   echo -n 'eval "$(rbenv init -)" && '
   echo -n 'echo -e " \033[1;32m|\033[0m  done"'
