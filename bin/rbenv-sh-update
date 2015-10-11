@@ -6,17 +6,31 @@ shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
 case "$shell" in
 fish )
-  echo -n "$(which rbenv-update); and "
-  echo -n 'echo -e "\033[1;32mreloading rbenv\033[0m"; and '
-  echo -n '. (rbenv init - | psub); and '
-  echo -n 'echo -e " \033[1;32m|\033[0m  done"'
+  cat <<EOF
+command rbenv update $@
+if command test -t 1
+  printf "\\e[1;32mreloading rbenv\\e[0m\\n"
+  . (rbenv init -|psub)
+  printf " \\033[1;32m|\\033[0m  done\\n"
+else
+  printf "reloading rbenv\\n"
+  . (rbenv init -|psub)
+  printf " |  done\\n"
+end
+EOF
   ;;
 * )
-  echo -n "$(which rbenv-update) && "
-  echo -n 'echo -e "\033[1;32mreloading rbenv\033[0m" && '
-  echo -n 'eval "$(rbenv init -)" && '
-  echo -n 'echo -e " \033[1;32m|\033[0m  done"'
+  cat <<EOF
+command rbenv update $@
+if [ -t 1 ]; then
+  printf "\\e[1;32mreloading rbenv\\e[0m\\n"
+  eval "\$(rbenv init -)"
+  printf " \\033[1;32m|\\033[0m  done\\n"
+else
+  printf "reloading rbenv\\n"
+  eval "\$(rbenv init -)"
+  printf " |  done\\n"
+fi
+EOF
   ;;
 esac
-
-echo
