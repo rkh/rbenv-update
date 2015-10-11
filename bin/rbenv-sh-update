@@ -21,15 +21,15 @@ EOF
   ;;
 * )
   cat <<EOF
-command rbenv update $@
+command rbenv update $@;
 if [ -t 1 ]; then
-  printf "\\e[1;32mreloading rbenv\\e[0m\\n"
-  eval "\$(rbenv init -)"
-  printf " \\033[1;32m|\\033[0m  done\\n"
+  printf "\\e[1;32mreloading rbenv\\e[0m\\n";
+  eval "\$(rbenv init -)";
+  printf " \\033[1;32m|\\033[0m  done\\n";
 else
-  printf "reloading rbenv\\n"
-  eval "\$(rbenv init -)"
-  printf " |  done\\n"
+  printf "reloading rbenv\\n";
+  eval "\$(rbenv init -)";
+  printf " |  done\\n";
 fi
 EOF
   ;;
