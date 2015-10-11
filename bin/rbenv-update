@@ -1,47 +1,23 @@
 #!/usr/bin/env bash
-# Usage: rbenv update [--noop]
-# Summary: Updates to latest version of rbenv and plugins from git.
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
-noop=""
-while [ $# -gt 0 ]; do
-  case "$1" in
-  --noop ) noop=true ;;
-  esac
-  shift 1
-done
-
-git() {
-  local cmd="command"
-  [[ -n "$noop" && "$1" = "pull" ]] && cmd="echo"
-  $cmd git "$@"
-}
-
-if [ -t 1 ]; then
-  color="\e[1;32m"
-  reset="\e[0m"
-else
-  color=""
-  reset=""
-fi
-
 indent_output() {
   while read data; do
-    printf " ${color}|${reset}  %s\n" "$data"
+    echo -e " \033[1;32m|\033[0m  $data"
   done
 }
 
 is_rbenv_git_repo() {
-  git remote -v 2>/dev/null | grep -q 'rbenv\|ruby-build'
+  $(git remote -v | grep -E 'rbenv|ruby-build' &>/dev/null)
 }
 
 rbenv_update() {
-  printf "${color}updating %s${reset}\n" "$1"
+  echo -e "\033[1;32mupdating $1\033[0m"
   if is_rbenv_git_repo; then
     git pull --no-rebase --ff 2>&1 | indent_output
   else
-    echo "Not an rbenv git repo; skipping..." | indent_output
+    echo -e "Not an rbenv git repo; skipping..." | indent_output
   fi
   echo
 }
@@ -49,10 +25,9 @@ rbenv_update() {
 cd "$(dirname $(which rbenv))"
 rbenv_update rbenv
 
-shopt -s nullglob
-for plugin in "$RBENV_ROOT"/plugins/*; do
+cd "${RBENV_ROOT:-$(rbenv root)}"
+for plugin in plugins/*; do
   pushd $plugin >/dev/null
   rbenv_update `basename $plugin`
   popd >/dev/null
 done
-shopt -u nullglob
