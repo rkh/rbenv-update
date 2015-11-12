@@ -33,14 +33,6 @@ indent_output() {
   done
 }
 
-pretty_output() {
-  if [ -n "$verbose" ]; then
-    indent_output
-  else
-    cat >/dev/null
-  fi
-}
-
 print_colored() {
   if [ -z "$quiet" ]; then
     printf "${color}%s${reset}\n" "$1"
@@ -49,12 +41,16 @@ print_colored() {
 
 git() {
   if [ -n "$noop" ]; then
+    # print would-be command
     echo git "$@" | indent_output
   elif [ -n "$quiet" ]; then
+    # mute stdout and stderr
     command git "$@" &>/dev/null
   elif [ -n "$verbose" ]; then
+    # indent stdout and stderr
     command git "$@" 2>&1 | indent_output
   else
+    # mute stdout, indent stderr
     command git "$@" 2>&1 >/dev/null | indent_output
   fi
 }
