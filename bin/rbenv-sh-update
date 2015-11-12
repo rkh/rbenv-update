@@ -8,29 +8,22 @@ case "$shell" in
 fish )
   cat <<EOF
 command rbenv update $@
+source (rbenv init -|psub)
 if isatty stdout
-  echo (set_color --bold)"reloading rbenv"(set_color normal)
-  source (rbenv init -|psub)
-  echo (set_color --bold)" |  "(set_color normal)"done"
-else
-  echo "reloading rbenv"
-  source (rbenv init -|psub)
-  echo " |  done"
+  set_color --bold
 end
+echo "Done updating rbenv"
+set_color normal
 EOF
   ;;
 * )
   cat <<EOF
 command rbenv update $@;
+eval "\$(rbenv init -)";
 if [ -t 1 ]; then
-  printf "\\e[1;32mreloading rbenv\\e[0m\\n";
-  eval "\$(rbenv init -)";
-  printf " \\033[1;32m|\\033[0m  done\\n";
-else
-  printf "reloading rbenv\\n";
-  eval "\$(rbenv init -)";
-  printf " |  done\\n";
+  printf "\\e[1;32m";
 fi
+printf "Done updating rbenv\\e[0m\\n";
 EOF
   ;;
 esac

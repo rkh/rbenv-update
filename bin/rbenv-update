@@ -56,3 +56,4 @@ for plugin in "$RBENV_ROOT"/plugins/*; do
   popd >/dev/null
 done
 shopt -u nullglob
+print_colored "Reloading rbenv"
