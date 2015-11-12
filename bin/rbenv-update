@@ -27,13 +27,17 @@ else
 fi
 
 # Helper functions
+indent_output() {
+  while read -r data; do
+    printf " ${color}|${reset}  %s\n" "$data"
+  done
+}
+
 pretty_output() {
   if [ -n "$verbose" ]; then
-    while read -r data; do
-      printf " ${color}|${reset}  %s\n" "$data"
-    done
+    indent_output
   else
-    cat >/dev/null 2>&1
+    cat >/dev/null
   fi
 }
 
@@ -45,9 +49,13 @@ print_colored() {
 
 git() {
   if [ -n "$noop" ]; then
-    echo git "$@"
+    echo git "$@" | indent_output
+  elif [ -n "$quiet" ]; then
+    command git "$@" &>/dev/null
+  elif [ -n "$verbose" ]; then
+    command git "$@" 2>&1 | indent_output
   else
-    command git "$@" 2>&1 | pretty_output
+    command git "$@" 2>&1 >/dev/null | indent_output
   fi
 }
 
@@ -58,7 +66,7 @@ is_rbenv_git_repo() {
 rbenv_update() {
   if is_rbenv_git_repo; then
     print_colored "Updating $1"
-    git pull --no-rebase --ff 2>&1
+    git pull --no-rebase --ff
   else
     print_colored "Skipping $1 since it's not an rbenv git repo"
   fi
