@@ -7,7 +7,6 @@ shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 # Parse command line flags
 case "$1" in
   -n | --noop ) noop=true ;;
-  -v | --verbose ) verbose=true ;;
   -q | --quiet | --silent ) quiet=true ;;
 esac
 
