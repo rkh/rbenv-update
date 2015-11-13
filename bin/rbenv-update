@@ -8,6 +8,8 @@ set -e
 if [ --complete = "$1" ]; then
   shift
   echo --noop
+  echo --quiet
+  echo --verbose
   exit 0
 fi
 
