@@ -4,11 +4,13 @@ set -e
 
 shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
+
+echo "command rbenv update $@;"
+echo "if command test -t 1; then"
+
 case "$shell" in
 fish )
   cat <<EOF
-command rbenv update $@
-if command test -t 1
   printf "\\e[1;32mreloading rbenv\\e[0m\\n"
   . (rbenv init -|psub)
   printf " \\033[1;32m|\\033[0m  done\\n"
@@ -21,8 +23,6 @@ EOF
   ;;
 * )
   cat <<EOF
-command rbenv update $@;
-if [ -t 1 ]; then
   printf "\\e[1;32mreloading rbenv\\e[0m\\n";
   eval "\$(rbenv init -)";
   printf " \\033[1;32m|\\033[0m  done\\n";
