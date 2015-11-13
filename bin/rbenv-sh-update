@@ -4,15 +4,24 @@ set -e
 
 shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
+# Parse command line flags
+case "$1" in
+  -n | --noop ) noop=true ;;
+  -v | --verbose ) verbose=true ;;
+  -q | --quiet | --silent ) quiet=true ;;
+esac
+
+
 
 echo "command rbenv update $@;"
 
-
-echo "if command test -t 1; then"
-echo "  printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
-echo "else"
-echo "  printf \"reloading rbenv\\n\";"
-echo "fi;"
+if [ -z "$quiet" ]; then
+  echo "if command test -t 1; then"
+  echo "  printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
+  echo "else"
+  echo "  printf \"Reloading rbenv\\n\";"
+  echo "fi;"
+fi
 
 case "$shell" in
 fish ) echo ". (rbenv init -|psub)" ;;
