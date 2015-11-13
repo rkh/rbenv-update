@@ -5,14 +5,27 @@ set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
 # Parse command line flags
+# Provide rbenv completions
 noop=""
 verbose=""
 quiet=""
 while [ $# -gt 0 ]; do
   case "$1" in
-  --noop ) noop=true ;;
-  --verbose ) verbose=true ;;
-  --quiet | --silent ) quiet=true ;;
+  -n | --noop ) noop=true ;;
+  -v | --verbose ) verbose=true ;;
+  -q | --quiet | --silent ) quiet=true ;;
+  --complete )
+    echo --noop
+    echo --quiet
+    echo --verbose
+    exit ;;
+  --help )
+    rbenv-help update
+    exit ;;
+  * )
+    echo "Unrecognized option: $1" >&2
+    rbenv-help update
+    exit 1 ;;
   esac
   shift 1
 done
@@ -64,14 +77,14 @@ rbenv_update() {
     print_colored "Updating $1"
     git pull --no-rebase --ff
   else
-    print_colored "Skipping $1 since it's not an rbenv git repo"
+    print_colored "Skipping $1; not an rbenv git repo"
   fi
 }
 
 # Main script
 if [ -n "$noop" ] && [ -n "$quiet" ]; then
   quiet=""
-  print_colored "Both --noop and --quiet given, ignoring --quiet" >&2
+  print_colored "Both --noop and --quiet given; ignoring --quiet" >&2
 fi
 
 cd "$(dirname "$(which rbenv)")"
