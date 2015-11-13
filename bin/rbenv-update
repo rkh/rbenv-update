@@ -4,16 +4,8 @@
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
-# Provide rbenv completions
-if [ --complete = "$1" ]; then
-  shift
-  echo --noop
-  echo --quiet
-  echo --verbose
-  exit 0
-fi
-
 # Parse command line flags
+# Provide rbenv completions
 noop=""
 verbose=""
 quiet=""
@@ -22,6 +14,11 @@ while [ $# -gt 0 ]; do
   -n | --noop ) noop=true ;;
   -v | --verbose ) verbose=true ;;
   -q | --quiet | --silent ) quiet=true ;;
+  --complete )
+    echo --noop
+    echo --quiet
+    echo --verbose
+    exit ;;
   --help )
     rbenv-help update
     exit ;;
