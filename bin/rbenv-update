@@ -10,9 +10,9 @@ verbose=""
 quiet=""
 while [ $# -gt 0 ]; do
   case "$1" in
-  --noop ) noop=true ;;
-  --verbose ) verbose=true ;;
-  --quiet | --silent ) quiet=true ;;
+  -n | --noop ) noop=true ;;
+  -v | --verbose ) verbose=true ;;
+  -q | --quiet | --silent ) quiet=true ;;
   esac
   shift 1
 done
@@ -71,7 +71,7 @@ rbenv_update() {
 # Main script
 if [ -n "$noop" ] && [ -n "$quiet" ]; then
   quiet=""
-  print_colored "Both --noop and --quiet given, ignoring --quiet" >&2
+  print_colored "Both --noop and --quiet given; ignoring --quiet" >&2
 fi
 
 cd "$(dirname "$(which rbenv)")"
