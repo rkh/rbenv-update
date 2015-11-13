@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
     rbenv-help update
     exit ;;
   * )
-    echo "Unrecognized option: $1" >&2
+    printf "Unrecognized option: $1\n\n" >&2
     rbenv-help update
     exit 1 ;;
   esac

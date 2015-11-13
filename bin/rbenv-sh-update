@@ -4,33 +4,33 @@ set -e
 
 shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
+# Parse command line flags
+if echo "$@" | egrep -q '(-n\|--noop)'; then noop=true; fi
+if echo "$@" | egrep -q '(-q\|--quiet\|--silent)'; then quiet=true; fi
+
+colorize() {
+  if [ "$shell" = fish ]; then echo "  if isatty stdout; set_color --bold; end"
+  else echo "  if [ -t 1 ]; then printf \"\\e[1;32m\"; fi;"; fi
+
+  echo "  printf \"$1\";"
+
+  if [ "$shell" = fish ]; then echo "  set_color normal"
+  else echo "  if [ -t 1 ]; then printf \"\\e[0m\"; fi;"; fi
+
+  echo "  printf \"$2\";"
+}
+
 case "$shell" in
-fish )
-  cat <<EOF
-command rbenv update $@
-if command test -t 1
-  printf "\\e[1;32mreloading rbenv\\e[0m\\n"
-  . (rbenv init -|psub)
-  printf " \\033[1;32m|\\033[0m  done\\n"
-else
-  printf "reloading rbenv\\n"
-  . (rbenv init -|psub)
-  printf " |  done\\n"
-end
-EOF
-  ;;
-* )
-  cat <<EOF
-command rbenv update $@;
-if [ -t 1 ]; then
-  printf "\\e[1;32mreloading rbenv\\e[0m\\n";
-  eval "\$(rbenv init -)";
-  printf " \\033[1;32m|\\033[0m  done\\n";
-else
-  printf "reloading rbenv\\n";
-  eval "\$(rbenv init -)";
-  printf " |  done\\n";
-fi
-EOF
-  ;;
+  fish )
+    echo "if command rbenv update $@"
+      if [ -z "$quiet" ]; then colorize "Reloading rbenv\n"; fi
+      if [ -z "$noop" ];  then echo "  source (rbenv init -|psub)"; fi
+      if [ -z "$quiet" ]; then colorize " | " "done\n"; fi
+    echo "end" ;;
+  * )
+    echo "if command rbenv update $@; then"
+      if [ -z "$quiet" ]; then colorize "Reloading rbenv\n"; fi
+      if [ -z "$noop" ];  then echo "  eval \"\$(rbenv init -)\";"; fi
+      if [ -z "$quiet" ]; then colorize " | " "done\n"; fi
+    echo "fi;" ;;
 esac
