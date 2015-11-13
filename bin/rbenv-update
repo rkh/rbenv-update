@@ -4,6 +4,13 @@
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
+# Provide rbenv completions
+if [ --complete = "$1" ]; then
+  shift
+  echo --noop
+  exit 0
+fi
+
 # Parse command line flags
 noop=""
 verbose=""
