@@ -64,7 +64,7 @@ rbenv_update() {
     print_colored "Updating $1"
     git pull --no-rebase --ff
   else
-    print_colored "Skipping $1 since it's not an rbenv git repo"
+    print_colored "Skipping $1; not an rbenv git repo"
   fi
 }
 
