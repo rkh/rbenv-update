@@ -28,3 +28,11 @@ if [ -z "$noop" ]; then
   *    ) echo "eval \"\$(rbenv init -)\";" ;;
   esac
 fi
+
+if [ -z "$quiet" ]; then
+  echo "if command test -t 1; then"
+  echo "  printf \" \\033[1;32m|\\033[0m  done\\n\";"
+  echo "else"
+  echo "  printf \" |  done\\n\";"
+  echo "fi;"
+fi
