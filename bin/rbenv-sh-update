@@ -11,30 +11,23 @@ case "$1" in
 esac
 
 
-
-echo "if command rbenv update $@; then"
-
-if [ -z "$quiet" ]; then
-  echo "  if command test -t 1; then"
-  echo "    printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
-  echo "  else"
-  echo "    printf \"Reloading rbenv\\n\";"
-  echo "  fi;"
-fi
-
-if [ -z "$noop" ]; then
-  case "$shell" in
-  fish ) echo "  . (rbenv init -|psub)" ;;
-  *    ) echo "  eval \"\$(rbenv init -)\";" ;;
-  esac
-fi
-
-if [ -z "$quiet" ]; then
-  echo "  if command test -t 1; then"
-  echo "    printf \" \\033[1;32m|\\033[0m  done\\n\";"
-  echo "  else"
-  echo "    printf \" |  done\\n\";"
-  echo "  fi;"
-fi
-
-echo "fi;"
+case "$shell" in
+  fish )
+    echo "  . (rbenv init -|psub)"
+    ;;
+  * )
+    echo "if command rbenv update $@; then"
+    if [ -z "$quiet" ]; then
+      echo "  if [ -t 1 ]; then printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
+      echo "  else printf \"Reloading rbenv\\n\"; fi;"
+    fi
+    if [ -z "$noop" ]; then
+      echo "  eval \"\$(rbenv init -)\";"
+    fi
+    if [ -z "$quiet" ]; then
+      echo "  if [ -t 1 ]; then printf \" \\033[1;32m|\\033[0m  done\\n\";"
+      echo "  else printf \" |  done\\n\"; fi;"
+    fi
+    echo "fi;"
+    ;;
+esac
