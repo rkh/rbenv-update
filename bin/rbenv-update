@@ -22,6 +22,7 @@ while [ $# -gt 0 ]; do
   -n | --noop ) noop=true ;;
   -v | --verbose ) verbose=true ;;
   -q | --quiet | --silent ) quiet=true ;;
+  --help ) rbenv-help update && exit ;;
   * )
     echo "Unrecognized option: $1" >&2
     rbenv-help update
