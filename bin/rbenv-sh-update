@@ -23,7 +23,9 @@ if [ -z "$quiet" ]; then
   echo "fi;"
 fi
 
-case "$shell" in
-fish ) echo ". (rbenv init -|psub)" ;;
-*    ) echo "eval \"\$(rbenv init -)\";" ;;
-esac
+if [ -z "$noop" ]; then
+  case "$shell" in
+  fish ) echo ". (rbenv init -|psub)" ;;
+  *    ) echo "eval \"\$(rbenv init -)\";" ;;
+  esac
+fi
