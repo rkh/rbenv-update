@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# Usage: rbenv update [--noop]
+# Usage: rbenv update [--noop|--verbose|--quiet]
 # Summary: Updates to latest version of rbenv and plugins from git.
 set -e
 [ -n "$RBENV_DEBUG" ] && set -x
 
+# Parse command line flags
 noop=""
+verbose=""
+quiet=""
 while [ $# -gt 0 ]; do
   case "$1" in
   --noop ) noop=true ;;
+  --verbose ) verbose=true ;;
+  --quiet | --silent ) quiet=true ;;
   esac
   shift 1
 done
 
-git() {
-  local cmd="command"
-  [[ -n "$noop" && "$1" = "pull" ]] && cmd="echo"
-  $cmd git "$@"
-}
-
+# Set colored output for TTY
 if [ -t 1 ]; then
   color="\e[1;32m"
   reset="\e[0m"
@@ -26,33 +26,61 @@ else
   reset=""
 fi
 
+# Helper functions
 indent_output() {
-  while read data; do
+  while read -r data; do
     printf " ${color}|${reset}  %s\n" "$data"
   done
 }
 
+print_colored() {
+  if [ -z "$quiet" ]; then
+    printf "${color}%s${reset}\n" "$1"
+  fi
+}
+
+git() {
+  if [ -n "$noop" ]; then
+    # print would-be command
+    echo git "$@" | indent_output
+  elif [ -n "$quiet" ]; then
+    # mute stdout and stderr
+    command git "$@" &>/dev/null
+  elif [ -n "$verbose" ]; then
+    # indent stdout and stderr
+    command git "$@" 2>&1 | indent_output
+  else
+    # mute stdout, indent stderr
+    command git "$@" 2>&1 >/dev/null | indent_output
+  fi
+}
+
 is_rbenv_git_repo() {
-  git remote -v 2>/dev/null | grep -q 'rbenv\|ruby-build'
+  command git remote -v 2>/dev/null | grep -q 'rbenv\|ruby-build'
 }
 
 rbenv_update() {
-  printf "${color}updating %s${reset}\n" "$1"
   if is_rbenv_git_repo; then
-    git pull --no-rebase --ff 2>&1 | indent_output
+    print_colored "Updating $1"
+    git pull --no-rebase --ff
   else
-    echo "Not an rbenv git repo; skipping..." | indent_output
+    print_colored "Skipping $1 since it's not an rbenv git repo"
   fi
-  echo
 }
 
-cd "$(dirname $(which rbenv))"
+# Main script
+if [ -n "$noop" ] && [ -n "$quiet" ]; then
+  quiet=""
+  print_colored "Both --noop and --quiet given, ignoring --quiet" >&2
+fi
+
+cd "$(dirname "$(which rbenv)")"
 rbenv_update rbenv
 
 shopt -s nullglob
 for plugin in "$RBENV_ROOT"/plugins/*; do
-  pushd $plugin >/dev/null
-  rbenv_update `basename $plugin`
+  pushd "$plugin" >/dev/null
+  rbenv_update "$(basename "$plugin")"
   popd >/dev/null
 done
 shopt -u nullglob
