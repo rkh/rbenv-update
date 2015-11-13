@@ -5,11 +5,8 @@ set -e
 shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
 # Parse command line flags
-case "$1" in
-  -n | --noop ) noop=true ;;
-  -q | --quiet | --silent ) quiet=true ;;
-esac
-
+if echo "$@" | egrep -q "(-n|--noop)"; then noop=true; fi
+if echo "$@" | egrep -q "(-q|--quiet|--silent)"; then quiet=true; fi
 
 case "$shell" in
   fish )
