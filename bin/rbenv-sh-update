@@ -12,27 +12,29 @@ esac
 
 
 
-echo "command rbenv update $@;"
+echo "if command rbenv update $@; then"
 
 if [ -z "$quiet" ]; then
-  echo "if command test -t 1; then"
-  echo "  printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
-  echo "else"
-  echo "  printf \"Reloading rbenv\\n\";"
-  echo "fi;"
+  echo "  if command test -t 1; then"
+  echo "    printf \"\\e[1;32mReloading rbenv\\e[0m\\n\";"
+  echo "  else"
+  echo "    printf \"Reloading rbenv\\n\";"
+  echo "  fi;"
 fi
 
 if [ -z "$noop" ]; then
   case "$shell" in
-  fish ) echo ". (rbenv init -|psub)" ;;
-  *    ) echo "eval \"\$(rbenv init -)\";" ;;
+  fish ) echo "  . (rbenv init -|psub)" ;;
+  *    ) echo "  eval \"\$(rbenv init -)\";" ;;
   esac
 fi
 
 if [ -z "$quiet" ]; then
-  echo "if command test -t 1; then"
-  echo "  printf \" \\033[1;32m|\\033[0m  done\\n\";"
-  echo "else"
-  echo "  printf \" |  done\\n\";"
-  echo "fi;"
+  echo "  if command test -t 1; then"
+  echo "    printf \" \\033[1;32m|\\033[0m  done\\n\";"
+  echo "  else"
+  echo "    printf \" |  done\\n\";"
+  echo "  fi;"
 fi
+
+echo "fi;"
