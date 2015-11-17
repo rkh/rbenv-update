@@ -5,8 +5,16 @@ set -e
 shell="$(basename "${RBENV_SHELL:-$SHELL}")"
 
 # Parse command line flags
-if echo "$@" | egrep -q '(-n\|--noop)'; then noop=true; fi
-if echo "$@" | egrep -q '(-q\|--quiet\|--silent)'; then quiet=true; fi
+for arg; do
+  case "$arg" in
+  -n | --noop ) noop=true ;;
+  -v | --verbose ) verbose=true ;;
+  -q | --quiet | --silent ) quiet=true ;;
+  * )
+    echo "command rbenv update $@"
+    exit ;;
+  esac
+done
 
 colorize() {
   if [ "$shell" = fish ]; then echo "  if isatty stdout; set_color --bold; end"
