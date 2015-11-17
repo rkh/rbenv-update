@@ -9,8 +9,8 @@ set -e
 noop=""
 verbose=""
 quiet=""
-while [ $# -gt 0 ]; do
-  case "$1" in
+for arg; do
+  case "$arg" in
   -n | --noop ) noop=true ;;
   -v | --verbose ) verbose=true ;;
   -q | --quiet | --silent ) quiet=true ;;
@@ -20,14 +20,12 @@ while [ $# -gt 0 ]; do
     echo --verbose
     exit ;;
   --help )
-    rbenv-help update
-    exit ;;
+    exec rbenv-help update
+    ;;
   * )
-    printf "Unrecognized option: $1\n\n" >&2
-    rbenv-help update
+    rbenv-help --usage update >&2
     exit 1 ;;
   esac
-  shift 1
 done
 
 # Set colored output for TTY
